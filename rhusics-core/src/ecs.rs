@@ -7,7 +7,7 @@ use collision::prelude::*;
 use specs::prelude::{Component, DenseVecStorage, FlaggedStorage};
 
 use collide::CollisionShape;
-use physics::{ForceAccumulator, Mass, PhysicalEntity, Velocity};
+use physics::{ForceAccumulator, Inertia, Mass, PhysicalEntity, Velocity};
 use {BodyPose, NextFrame};
 
 impl<P, R> Component for BodyPose<P, R>
@@ -47,7 +47,7 @@ where
 impl<S, I> Component for Mass<S, I>
 where
     S: Send + Sync + 'static,
-    I: Send + Sync + 'static,
+    I: Inertia + Send + Sync + 'static,
 {
     type Storage = DenseVecStorage<Self>;
 }

@@ -6,7 +6,7 @@ use specs::error::Error as SpecsError;
 use specs::prelude::{Builder, Component, Entity, EntityBuilder, SystemData, World, WriteStorage};
 
 use core::{
-    CollisionShape, ForceAccumulator, Mass, NextFrame, PhysicalEntity, PhysicsTime, Pose,
+    CollisionShape, ForceAccumulator, Inertia, Mass, NextFrame, PhysicalEntity, PhysicsTime, Pose,
     Primitive, Velocity,
 };
 
@@ -77,7 +77,7 @@ pub trait WithPhysics {
         V: VectorSpace + Zero + Clone + Send + Sync + 'static,
         A: Copy + Zero + Clone + Send + Sync + 'static,
         Y: Send + Sync + 'static,
-        I: Send + Sync + 'static;
+        I: Inertia + Send + Sync + 'static;
 
     /// Add static physical entity components to entity
     ///
@@ -105,7 +105,7 @@ pub trait WithPhysics {
         P::Point: EuclideanSpace<Scalar = S> + Send + Sync + 'static,
         R: Rotation<P::Point> + Send + Sync + 'static,
         Y: Send + Sync + 'static,
-        I: Send + Sync + 'static;
+        I: Inertia + Send + Sync + 'static;
 }
 
 impl<'a> WithPhysics for EntityBuilder<'a> {
@@ -127,7 +127,7 @@ impl<'a> WithPhysics for EntityBuilder<'a> {
         V::Scalar: BaseFloat + Send + Sync + 'static,
         A: Copy + Clone + Zero + Send + Sync + 'static,
         Y: Send + Sync + 'static,
-        I: Send + Sync + 'static,
+        I: Inertia+ Send + Sync + 'static,
     {
         self.with_static_physical_entity(shape, pose.clone(), physical_entity, mass)
             .with(NextFrame { value: pose })
@@ -151,7 +151,7 @@ impl<'a> WithPhysics for EntityBuilder<'a> {
         P::Point: EuclideanSpace<Scalar = S> + Send + Sync + 'static,
         R: Rotation<P::Point> + Send + Sync + 'static,
         Y: Send + Sync + 'static,
-        I: Send + Sync + 'static,
+        I: Inertia + Send + Sync + 'static,
     {
         self.with(shape).with(physical_entity).with(mass).with(pose)
     }
@@ -180,7 +180,7 @@ where
     V: VectorSpace + Zero + Clone + Send + Sync + 'static,
     A: Copy + Zero + Clone + Send + Sync + 'static,
     Y: Send + Sync + 'static,
-    I: Send + Sync + 'static,
+    I: Inertia + Send + Sync + 'static,
     R: Rotation<P::Point> + Send + Sync + 'static,
 {
     /// Collision shapes
@@ -226,7 +226,7 @@ where
     V: VectorSpace + Zero + Clone + Send + Sync + 'static,
     A: Copy + Zero + Clone + Send + Sync + 'static,
     Y: Send + Sync + 'static,
-    I: Send + Sync + 'static,
+    I: Inertia + Send + Sync + 'static,
     R: Rotation<P::Point> + Send + Sync + 'static,
 {
     /// Extract physical entity storage from `World`

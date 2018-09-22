@@ -16,12 +16,20 @@ use super::{Material, Volume};
 /// - `I`: Inertia type, usually `Scalar` or `Matrix3`, see `Inertia` for more information.
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Mass<S, I> {
+pub struct Mass<S, I: Inertia> {
     mass: S,
     inverse_mass: S,
 
+    #[cfg_attr(feature = "serde", serde(default = "I::infinite"))]
     inertia: I,
+    #[cfg_attr(feature = "serde", serde(default = "I::infinite_invert"))]
     inverse_inertia: I,
+}
+
+impl<S: BaseFloat, I: Inertia> Default for Mass<S, I> {
+    fn default() -> Self {
+        Mass::new(S::one())
+    }
 }
 
 /// Moment of inertia, used for abstracting over 2D/3D inertia tensors
@@ -32,6 +40,8 @@ pub trait Inertia: Mul<Self, Output = Self> + Copy {
     fn infinite() -> Self;
     /// Compute the inverse of the inertia
     fn invert(&self) -> Self;
+    /// Return the zero inertia (inverse of infinite)
+    fn infinite_invert() -> Self;
     /// Compute the inertia tensor in the bodies given orientation
     fn tensor(&self, orientation: &Self::Orientation) -> Self;
 }
@@ -49,6 +59,10 @@ impl Inertia for f32 {
         } else {
             1. / *self
         }
+    }
+
+    fn infinite_invert() -> Self {
+        0.
     }
 
     fn tensor(&self, _: &Basis2<f32>) -> Self {
@@ -69,6 +83,10 @@ impl Inertia for f64 {
 
     fn tensor(&self, _: &Basis2<f64>) -> Self {
         *self
+    }
+
+    fn infinite_invert() -> Self {
+        0.
     }
 
     fn infinite() -> Self {
@@ -93,6 +111,10 @@ where
     fn tensor(&self, orientation: &Quaternion<S>) -> Self {
         let mat3 = Matrix3::from(*orientation);
         mat3 * (*self * mat3.transpose())
+    }
+
+    fn infinite_invert() -> Self {
+        Matrix3::zero()
     }
 
     fn infinite() -> Self {

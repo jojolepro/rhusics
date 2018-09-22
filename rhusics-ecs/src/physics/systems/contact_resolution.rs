@@ -152,7 +152,7 @@ where
     T: Pose<P, R> + Component + Send + Sync + 'static,
     R: Rotation<P> + Send + Sync + 'static,
     A: Clone + Send + Sync + 'static,
-    I: Clone + Send + Sync + 'static,
+    I: Inertia + Clone + Send + Sync + 'static,
 {
     match (entities.get(entity), masses.get(entity), poses.get(entity)) {
         (Some(e), Some(mass), Some(pose)) if e.active() => Some(ResolveData::new(

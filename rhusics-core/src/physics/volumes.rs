@@ -13,7 +13,7 @@ use collide::CollisionShape;
 /// ### Type parameters:
 ///
 /// - `I`: Inertia type, see `Inertia` for more information
-pub trait Volume<S, I> {
+pub trait Volume<S, I: Inertia> {
     /// Compute the mass of the shape based on its material
     fn get_mass(&self, material: &Material) -> Mass<S, I>;
 }

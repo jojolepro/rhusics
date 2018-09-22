@@ -107,7 +107,7 @@ where
     P: EuclideanSpace + 'a,
     P::Scalar: BaseFloat,
     R: Rotation<P> + 'a,
-    I: 'a,
+    I: Inertia + 'a,
     A: Clone + 'a,
     B: Pose<P, R> + 'a,
 {
@@ -127,7 +127,7 @@ where
     P: EuclideanSpace + 'a,
     P::Scalar: BaseFloat,
     R: Rotation<P> + 'a,
-    I: 'a,
+    I: Inertia + 'a,
     A: Clone + 'a,
     B: Pose<P, R> + 'a,
 {
